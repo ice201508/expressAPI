@@ -1,0 +1,25 @@
+{
+  "name": "expressapi",
+  "version": "1.0.0",
+  "description": "express, rest api",
+  "main": "index.js",
+  "scripts": {
+    "start": "supervisor index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ice201508/expressAPI.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ice201508/expressAPI/issues"
+  },
+  "homepage": "https://github.com/ice201508/expressAPI#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.2",
+    "multer": "^1.3.0"
+  }
+}
