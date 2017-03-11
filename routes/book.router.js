@@ -6,7 +6,7 @@ router.use(function(req, res, next){
 })
 
 router.get('/list', function(req, res, next){
-  console.log("req body请求体: ", req.body);
+  console.log("req body请求cookie: ", req.cookies);
   var data = {
     'req_path': req.path,
     'req_originalUrl': req.originalUrl,
