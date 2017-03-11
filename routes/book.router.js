@@ -6,6 +6,7 @@ router.use(function(req, res, next){
 })
 
 router.get('/list', function(req, res, next){
+  console.log("req body请求体: ", req.body);
   var data = {
     'req_path': req.path,
     'req_originalUrl': req.originalUrl,
@@ -15,6 +16,7 @@ router.get('/list', function(req, res, next){
 })
 
 router.post('/detail', function(req, res, next){
+  console.log("req body请求体: ", req.body);
   var data = {
     'req_path': req.path,
     'req_originalUrl': req.originalUrl,
