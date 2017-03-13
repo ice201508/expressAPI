@@ -3,36 +3,38 @@ var router = express.Router();
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var db = require("../modal/modal").db;
 
-//path.resolve(__dirname , '..' , '/views/index.html')
-
-var app = express();
-// app.use(cookieParser());
-// app.use(session({
-//   secret: '123465',
-//   // name: 'testapp',
-//   resave: true,
-//   saveUninitialized: false,
-//   cookie: {secure: true},
-// }))
+router.use(function(req, res, next){
+    next();
+})
 
 router.get('/', function(req, res, next){
-  console.log('base path根路径： ', path.resolve(__dirname , '..' , '/views/index.html'));
-  console.log('req.cookies:  ', req.cookie);
-  console.log('req.session:  ', req.session);
-  res.sendFile(path.join(__dirname , '..' , '/views/index.html'));
+    res.sendFile(path.join(__dirname , '..' , '/views/index.html'));
 })
 
 router.get('/login', function(req, res, next){
-  console.log('req.cookies:  ', req.cookie);
-  console.log('req.session:  ', req.session);
-  var data = {
-    cookies: req.cookies || 'null',
-    session: req.session,
-  }
+    var mongo_data = null;
+    if(!req.session.times){
+        req.session.times = 1;
+    } else {
+        req.session.times += 1;
+        db.collection('book').insert({times: req.session.times}, function(err, result){
+            console.log(result);
+            mongo_data = result;
+            db.close();
+        })
+    }
 
-  res.cookie('backend-cookies-set', 'def2017efea03112365asd', {maxAge: 60000, httpOnly: false});
-  res.send(data);
+    var data = {
+        cookies: req.cookies || 'empty',
+        session: req.session,
+        path: path.resolve(__dirname , '..' , '/views/index.html'),
+        times: ("调用接口的次数: " + req.session.times),
+        mongo_data: mongo_data,
+    }
+    
+    res.send(data);
 })
 
 module.exports = router;

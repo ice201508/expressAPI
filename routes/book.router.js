@@ -1,28 +1,29 @@
 var router = require('express').Router();
 
 router.use(function(req, res, next){
-  console.log('book路由里的中间件,处理一些逻辑');
-  next();
+    console.log('book路由里的中间件,处理一些逻辑');
+    //next(new Error('lei'));
+    next()
 })
 
-router.get('/list', function(req, res, next){
-  console.log("req body请求cookie: ", req.cookies);
-  var data = {
-    'req_path': req.path,
-    'req_originalUrl': req.originalUrl,
-    'req_params': req.params,
-  }
-  res.send(data);
+router.get('/list/:id', function(req, res, next){
+    var data = {
+        'req_path': req.path,
+        'req_originalUrl': req.originalUrl,
+        'req_params': req.params,
+        'cookie': req.cookies['frontend-Cookies-set'],
+    }
+    res.send(data);
 })
-
+    
 router.post('/detail', function(req, res, next){
-  console.log("req body请求体: ", req.body);
-  var data = {
-    'req_path': req.path,
-    'req_originalUrl': req.originalUrl,
-    'req_params': req.params,
-  }
-  res.send(data);
+    var data = {
+        'req_path': req.path,
+        'req_originalUrl': req.originalUrl,
+        'req_params': req.params,
+        'session': req.session,
+    }
+    res.send(data);
 })
 
 module.exports = router;

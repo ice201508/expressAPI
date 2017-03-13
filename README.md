@@ -1,9 +1,10 @@
 ## 环境
-npm install express multer body-parser cookie-parser jsonwebtoken express-session --save
+npm install express multer body-parser cookie-parser jsonwebtoken express-session mongoskin --save
 使用supervisor调试
 
 [Express文档](https://expressjs.com/)，
 [Express中文文档](http://www.expressjs.com.cn/)
+[Express Git BOOK](https://maninboat.gitbooks.io/n-blog/content/)
 
 ### 5种中间件
 
@@ -24,6 +25,34 @@ response cookie是服务器端返回的新的cookie，也就是将会储存在�
 
 设置cookie是通过在响应的头部加入 Set-Cookie 来设置的， response cookie 从服务器端返回新cookie
 
+只有设置了app.use(cookieParser());  才能在请求中用 req.cookies, 即在服务器查看cookies
+现在用了 app.use(session(options)), 也可以不用引入cookie-parser库， 直接用 req.session.name, 取得对应的已经储存的值
+
 
 ### JWT
 jsonwebtoken 中文  百度
+
+
+### Mongodb数据库
+[mongodb下载位置](http://dl.mongodb.org/dl/win32/x86_64)
+mogond.exe 是数据库的进程               类似 mysqld
+mongo.exe   是数据库的shell控制台    类似 mysql
+让服务随window服务启动  mongod --dbpath D:\mongodb\data --logpath D:\mongodb\log\mongodb.log --logappend --directoryperdb --serviceName "MongoDB" --serviceDisplayName "MongoDB" --install
+sc delete MongoDB
+之后 net start/stop MongoDB  
+
+mongo服务启动后，就可以通过mongo客户端操作数据库，
+常见的mongo客户端：shell控制台，node,php等驱动程序，mongoVUE
+
+使用[mongoskin](https://github.com/kissjs/node-mongoskin)驱动来接mongoDB
+官方驱动[mongodb](http://mongodb.github.io/node-mongodb-native/)貌似不适合express
+
+show dbs/collections
+use book  //指定book数据库(没有就创建,默认是test)
+db.createCollection("users");  //创建一个集合(就是表)
+db.users.insert({userid: "admin", password: "123456"})  //插入一条数据
+db.users.find()  查看数据
+
+
+
+
