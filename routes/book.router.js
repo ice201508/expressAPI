@@ -11,13 +11,12 @@ router.use(function(req, res, next){
     next()
 })
 
+//http://expressjs.jser.us/guide.html#users-online
 router.get('/list/:id', function(req, res, next){
     var data = {
         'req_path': req.path,
         'req_originalUrl': req.originalUrl,
         'req_params': req.params,
-        'cookie': req.cookies['frontend-Cookies-set'],
-    }
     res.send(data);
 })
     
