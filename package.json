@@ -24,6 +24,8 @@
     "jsonwebtoken": "^7.3.0",
     "mongodb": "^2.2.24",
     "mongoskin": "^2.1.0",
-    "multer": "^1.3.0"
+    "multer": "^1.3.0",
+    "mysql": "^2.13.0",
+    "redis": "^2.7.0"
   }
 }
