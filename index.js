@@ -5,6 +5,7 @@ var login = require('./routes/login.router');
 var book = require('./routes/book.router');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var redisStore = require('connect-redis')(session);
 
 var app = express();
 app.use(bodyParser.json())
@@ -21,6 +22,12 @@ app.use(session({
     cookie: {
     maxAge : 3600000,
     },
+    store: new redisStore({
+        host: 'localhost',
+        port: 6379,
+        pass: 123456,
+        //prefix: 'book-session'  默认是sess:
+    }),
 }))
 
 
@@ -29,8 +36,11 @@ app.use('/', login);
 app.use('/book', book);
 
 app.use(function(err, req, res, next){
+    if(req.session){
+        next(new Error("没有设置session"));
+    }
     console.log(err.stack);
     res.status(500).send('something broke');
 })
 
-app.listen(8000);
+app.listen(3000);

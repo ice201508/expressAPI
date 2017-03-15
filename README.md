@@ -35,11 +35,18 @@ response cookie是服务器端返回的新的cookie，也就是将会储存在�
 jsonwebtoken 中文  百度
 
 
+
+### Mysql数据库
+本机mysql服务启动  mysqld.exe,  关闭服务 mysqladmin -u root -p shutdown
+之后就可以使用客户端连接了， mysql -u root -p
+下载支持nodejs的mysql驱动  npm install mysql
+
+
 ### Mongodb数据库
 [mongodb下载位置](http://dl.mongodb.org/dl/win32/x86_64)
 mogond.exe 是数据库的进程               类似 mysqld
 mongo.exe   是数据库的shell控制台    类似 mysql
-让服务随window服务启动  mongod --dbpath D:\mongodb\data --logpath D:\mongodb\log\mongodb.log --logappend --directoryperdb --serviceName "MongoDB" --serviceDisplayName "MongoDB" --install
+让服务随window服务启动  mongod --dbpath D:\mongodb\db --logpath D:\mongodb\log\mongodb.log --logappend --directoryperdb --serviceName "MongoDB" --serviceDisplayName "MongoDB" --install
 sc delete MongoDB
 之后 net start/stop MongoDB  
 
@@ -56,15 +63,23 @@ db.users.insert({userid: "admin", password: "123456"})  //插入一条数据
 db.users.find()  查看数据
 
 
-### Mysql数据库
-下载支持nodejs的mysql驱动  npm install mysql
-
-
 ### Redis数据库
 [redis Win64下载地址](https://github.com/ServiceStack/redis-windows/blob/master/downloads/redis-64.3.0.503.zip)
+
+redis常用命令:
+(keys *, keys 'lu*', randomkey, dbsize, info, flushdb清空)
+set key value   ===>  get key
+hset key field value   (对象存储)
+hmset key field value [field value ...] 同时设置多个属性
+
 redis-serever.exe 服务器， redis-cli.exe 客户端
 修改配置文件   添加：requirepass 123456
 执行redis-server d:\redis\redis.windows.conf --maxmemory 200M
-客户端  redis-cli  启动   如果设置了密码，需要先执行auth passwd否则会提示错错误
+客户端  redis-cli  启动   如果设置了密码，需要先执行auth 123456否则会提示错错误
 
+redis针对node的客户端 node-redis
 现在支持nodejs的redis驱动  npm install redis
+
+[两者区别](http://www.open-open.com/lib/view/open1421307039328.html)
+
+connect-redis是一个redis版的session存储器，使用node_redis作为驱动，配合express-session实现session存储到redis中

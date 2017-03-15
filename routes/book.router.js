@@ -17,6 +17,7 @@ router.get('/list/:id', function(req, res, next){
         'req_path': req.path,
         'req_originalUrl': req.originalUrl,
         'req_params': req.params,
+    }
     res.send(data);
 })
     
