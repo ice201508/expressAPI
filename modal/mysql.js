@@ -1,3 +1,4 @@
+//https://www.npmjs.com/package/mysql 使用的 mysql相应客户端文档
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({

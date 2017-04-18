@@ -22,12 +22,12 @@ app.use(session({
     cookie: {
     maxAge : 3600000,
     },
-    store: new redisStore({
-        host: 'localhost',
-        port: 6379,
-        pass: 123456,
-        //prefix: 'book-session'  默认是sess:
-    }),
+    // store: new redisStore({
+    //     host: 'localhost',
+    //     port: 6379,
+    //     pass: 123456,
+    //     //prefix: 'book-session'  默认是sess:
+    // }),
 }))
 
 
@@ -43,4 +43,4 @@ app.use(function(err, req, res, next){
     res.status(500).send('something broke');
 })
 
-app.listen(3000);
+app.listen(3005);

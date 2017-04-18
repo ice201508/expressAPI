@@ -5,7 +5,6 @@ var config = {
     port: 6379,
     password: 123456,
 }
-exports.db = redis.createClient(config);
 
 db.on('error', function(err){
     console.log('err: ', err);
@@ -23,3 +22,5 @@ db.hkeys("hash key", function (err, replies) {
     db.quit();
 });
 db.quit();
+
+exports.db = redis.createClient(config);
