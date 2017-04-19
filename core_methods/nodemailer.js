@@ -1,3 +1,4 @@
+//https://nodemailer.com/about/
 //nodemailer相当于客户端
 var nodemailer = require('nodemailer');
 
@@ -11,14 +12,6 @@ var transporter = nodemailer.createTransport({
     pass: 'getvuifjmtvfbgfh'
   }
 });
-
-    // attachments: [
-    //   {
-    //     fileName: 'a.js',
-    //     filePath: 'a.js',
-    //     contentType: 'application/javascript'
-    //   }
-    // ]
 
 //发送邮件
 var sendMail = function(des,sub,html){

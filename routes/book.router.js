@@ -1,13 +1,13 @@
 var router = require('express').Router();
 
 router.use(function(req, res, next){
-    console.log('book路由里的中间件,处理一些逻辑');
-    if(req.session.times && req.session.times >= 1){
-        next();
-    } else {
-        res.send("错误");
-    }
-    //next(new Error('lei'));
+    // console.log('book路由里的中间件,处理一些逻辑');
+    // if(req.session.times && req.session.times >= 1){
+    //     next();
+    // } else {
+    //     res.send("错误");
+    // }
+    // //next(new Error('lei'));
     next()
 })
 
