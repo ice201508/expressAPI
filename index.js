@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var multer = require('multer');
 var login = require('./routes/login.router');
 var book = require('./routes/book.router');
+var upload = require('./routes/upload.router');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var redisStore = require('connect-redis')(session);
@@ -34,6 +35,7 @@ app.use(cookieParser());
 //将对应的路由挂载到不同路径
 app.use('/', login);
 app.use('/book', book);
+app.use('/upload', upload);
 
 app.set("x-powered-by",false);
 //默认所有请求都可以跨域

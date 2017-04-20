@@ -12,11 +12,14 @@ var db = require("../modal/mysql").db;
 
 db.connect();
 
+//CORS 跨域资源共享
 router.use(function(req, res, next){
     res.set({
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Origin": "X-Requested-With",
-        "Access-Control-Allow-Origin": "PUT, GET, POST, DELETE, OPTIONS",
+        "Access-Control-Allow-Origin": "*", //指定某个具体的网站http://localhost:63342
+        "Access-Control-Allow-Headers": "Content-Type,Content-Length, Authorization, Accept,X-Requested-With",
+        "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
+        //res.header('Access-Control-Allow-Headers', 'Content-Type');
+        //res.header('Access-Control-Allow-Credentials','true');
     })
     next();
 })
@@ -73,7 +76,6 @@ router.post('/login', function(req, res, next){
             })
         })
     }
-    
 })
 
 router.post('/registry', function(req, res, next){
@@ -123,17 +125,19 @@ router.post('/upload', function(req, res, next){
 })
 
 router.get('/getinfo', function(req, res, next){
-    var sql = "select * from book";
+    console.log(req.cookies);
+    res.set('staat', '123456');
+    var sql = "select * from user";
     var des = "'leko-ljl@163.com'";
     var sub = "'主题内容'";
     var html = "这是来自www.leijiuling.com的注册邮件，如果不是本人，请忽略： <br /> <h3>验证码：4659</h3> <br/><a href='http://www.leijiuling.com'>前往</a>"
-    var responseEmail = sendMail(des,sub,html);
+    //var responseEmail = sendMail(des,sub,html);
     db.query(sql, function(err, rows, field){
         if (err) throw err;
         var data = {
             rows: rows,
             fiele: field,
-            responseEmail: responseEmail,
+            cookies: req.cookies,
         }
         res.send(data);
     })
