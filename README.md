@@ -83,3 +83,6 @@ redis针对node的客户端 node-redis
 [两者区别](http://www.open-open.com/lib/view/open1421307039328.html)
 
 connect-redis是一个redis版的session存储器，使用node_redis作为驱动，配合express-session实现session存储到redis中
+
+
+模仿别人的项目 https://github.com/nswbmw/N-blog/blob/master/lib/mongo.js
