@@ -26,9 +26,9 @@ router.use(function(req, res, next){
 
 function create_table(){
     var sql_authcode = "CREATE TABLE IF NOT EXISTS `authcode` (`id` int(11) PRIMARY KEY not null auto_increment, `auth_code` varchar(10) NOT NULL COMMENT '验证码', `auth_code_confirm` varchar(50) NOT NULL COMMENT '验证码前端确认值',`create_time` datetime default now() COMMENT '创建时间')  default charset=utf8;";
-    var sql_info = "CREATE TABLE IF NOT EXISTS `book` (`id` int(11) PRIMARY KEY not null auto_increment,`bname` varchar(50) NOT NULL,`author` varchar(50) NOT NULL,`addr` varchar(100) NOT NULL,`price` varchar(30), `create_time` datetime default now() COMMENT '创建时间', `update_time` datetime default now() COMMENT '最近更新时间')  default charset=utf8;";
-    var sql_user = "CREATE TABLE IF NOT EXISTS `user` (`id` int(11) PRIMARY KEY not null auto_increment,`email` varchar(50) NOT NULL, `password` varchar(50) NOT NULL,`uname` varchar(50),`sex` char(2) default 1, `phone` varchar(30), `create_time` datetime default now() NOT NULL COMMENT '创建时间', `update_time` datetime default now() DEFAULT NULL COMMENT '最近更新时间')  default charset=utf8;";
-    var sql_order = "CREATE TABLE IF NOT EXISTS `order` (`id` int(11) PRIMARY KEY not null auto_increment,`member_id` int(11) DEFAULT NULL COMMENT '用户ID',`serial_no` int(11) DEFAULT NULL COMMENT '每日订单流水号',`pay_money` float(11,2) DEFAULT NULL COMMENT '待支付金额 、待退款金额 0表示支付完成', `create_time` datetime default now() NOT NULL COMMENT '下单时间',`confirm_time` datetime default now() DEFAULT NULL COMMENT '订单确认时间')  default charset=utf8;";
+    var sql_info = "CREATE TABLE IF NOT EXISTS `book` (`id` int(11) PRIMARY KEY not null auto_increment, `bid` varchar(20) NOT NULL, `bname` varchar(50) NOT NULL,`author` varchar(50) NOT NULL,`intro` varchar(100) NOT NULL,`price` varchar(30), `img_url` varchar(100) NOT NULL, `detail` varchar(1000), `rate` int(2), `create_time` datetime default now() COMMENT '创建时间', `update_time` datetime default now() COMMENT '最近更新时间')  default charset=utf8;";
+    var sql_user = "CREATE TABLE IF NOT EXISTS `user` (`id` int(11) PRIMARY KEY not null auto_increment, `uid` varchar(20) NOT NULL, `email` varchar(50) NOT NULL, `password` varchar(50) NOT NULL,`uname` varchar(50),`sex` char(2) default 1, `phone` varchar(30), `create_time` datetime default now() NOT NULL COMMENT '创建时间', `update_time` datetime default now() DEFAULT NULL COMMENT '最近更新时间')  default charset=utf8;";
+    var sql_order = "CREATE TABLE IF NOT EXISTS `order` (`id` int(11) PRIMARY KEY NOT NULL auto_increment,`order_id` varchar(20) NOT NULL, `member_id` int(11) DEFAULT NULL COMMENT '用户ID',`serial_no` int(11) DEFAULT NULL COMMENT '每日订单流水号',`pay_money` float(11,2) DEFAULT NULL COMMENT '待支付金额 、待退款金额 0表示支付完成', `create_time` datetime default now() NOT NULL COMMENT '下单时间',`confirm_time` datetime default now() DEFAULT NULL COMMENT '订单确认时间')  default charset=utf8;";
     db.query(sql_authcode, function(err, rows, fields){
         if (err) throw err;
     });
@@ -51,36 +51,51 @@ router.post('/login', function(req, res, next){
     console.log("req.body: ", req.body);
     if(req.body.auth_code_confirm) {
         var curr_time = moment().format();
+        var uid = '00' + new Date().getTime();
         var sql = 'select auth_code from authcode where auth_code_confirm = ' + '"' + req.body.auth_code_confirm + '"';
-        var sql_insert_user_info = 'insert into user VALUES(null,' + "'" + req.body.email + "'," + "'" + req.body.password + "'," + 'null ,null,null,' + "'" + curr_time + "'," + "'"+curr_time + "'" + ')'
+        var sql_insert_user_info = 'insert into user VALUES(null,' + '"' + uid + '"'+ ",'" + req.body.email + "'," + "'" + req.body.password + "'," + 'null ,null,null,' + "'" + curr_time + "'," + "'"+curr_time + "'" + ')'
         db.query(sql, function(err, rows, fields){
-            if(err) throw err;
-            if(rows[0].auth_code == req.body.auth_code) {
+            if(err){
+                res.status(500).send({message: err})
+            };
+            console.log(rows);
+            if(rows.length>0 && rows[0].auth_code == req.body.auth_code) {
                 db.query(sql_insert_user_info, function(err, rows, fields){
-                    if(err) throw err;
+                    if(err){
+                        res.status(500).send({message: err})
+                    };
                     res.send({
+                        code: 1,
                         message: '注册成功'
                     });
                 })
             } else {
-                res.status(400).send({message: '验证码输入错误！请重试'})
+                res.status(400).send({message: '账号或密码或验证码输入错误！请重试'})
             }
         })
     } else {
         var sql_select_user_info = 'select email, password from user where email = ' + '"' + req.body.email + '"' + ' and password = ' + '"' + req.body.password +'"';
         db.query(sql_select_user_info, function(err, rows, fields){
             if(err) throw err;
-            console.log('查询成功');
-            res.send({
-                message: '注册成功'
-            })
+            console.log('查询成功',rows);
+            if(rows.length > 0){
+                res.status(200).send({
+                    code: 1,
+                    message: '登录成功'
+                })
+            } else {
+                res.status(200).send({
+                    code: -1,
+                    message: '账号或密码错误'
+                })
+            }
         })
     }
 })
 
 router.post('/registry', function(req, res, next){
     create_table()
-    res.end('112');
+    res.status(500).send({message: 'success'});
 })
 
 router.post('/authcode', function(req, res, next){
