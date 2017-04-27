@@ -28,7 +28,7 @@ function create_table(){
     var sql_authcode = "CREATE TABLE IF NOT EXISTS `authcode` (`id` int(11) PRIMARY KEY not null auto_increment, `auth_code` varchar(10) NOT NULL COMMENT '验证码', `auth_code_confirm` varchar(50) NOT NULL COMMENT '验证码前端确认值',`create_time` datetime default now() COMMENT '创建时间')  default charset=utf8;";
     var sql_info = "CREATE TABLE IF NOT EXISTS `book` (`id` int(11) PRIMARY KEY not null auto_increment, `bid` varchar(20) NOT NULL, `bname` varchar(50) NOT NULL,`author` varchar(50) NOT NULL,`intro` varchar(100) NOT NULL,`price` varchar(30), `img_url` varchar(100) NOT NULL, `detail` varchar(1000), `rate` int(2), `create_time` datetime default now() COMMENT '创建时间', `update_time` datetime default now() COMMENT '最近更新时间')  default charset=utf8;";
     var sql_user = "CREATE TABLE IF NOT EXISTS `user` (`id` int(11) PRIMARY KEY not null auto_increment, `uid` varchar(20) NOT NULL, `email` varchar(50) NOT NULL, `password` varchar(50) NOT NULL,`uname` varchar(50),`sex` char(2) default 1, `phone` varchar(30), `create_time` datetime default now() NOT NULL COMMENT '创建时间', `update_time` datetime default now() DEFAULT NULL COMMENT '最近更新时间')  default charset=utf8;";
-    var sql_order = "CREATE TABLE IF NOT EXISTS `order` (`id` int(11) PRIMARY KEY NOT NULL auto_increment,`order_id` varchar(20) NOT NULL, `member_id` int(11) DEFAULT NULL COMMENT '用户ID',`serial_no` int(11) DEFAULT NULL COMMENT '每日订单流水号',`pay_money` float(11,2) DEFAULT NULL COMMENT '待支付金额 、待退款金额 0表示支付完成', `create_time` datetime default now() NOT NULL COMMENT '下单时间',`confirm_time` datetime default now() DEFAULT NULL COMMENT '订单确认时间')  default charset=utf8;";
+    var sql_order = "CREATE TABLE IF NOT EXISTS `orders` (`id` int(11) PRIMARY KEY NOT NULL auto_increment,`order_id` varchar(20) NOT NULL, `member_id` varchar(20) DEFAULT NULL COMMENT '用户ID',`serial_no` varchar(20) DEFAULT NULL COMMENT '每日订单流水号',`pay_money` varchar(10) DEFAULT NULL COMMENT '待支付金额 、待退款金额 0表示支付完成', `create_time` datetime default now() NOT NULL COMMENT '下单时间')  default charset=utf8;";
     db.query(sql_authcode, function(err, rows, fields){
         if (err) throw err;
     });
@@ -66,6 +66,7 @@ router.post('/login', function(req, res, next){
                     };
                     res.send({
                         code: 1,
+                        uid: uid,
                         message: '注册成功'
                     });
                 })
@@ -74,22 +75,32 @@ router.post('/login', function(req, res, next){
             }
         })
     } else {
-        var sql_select_user_info = 'select email, password from user where email = ' + '"' + req.body.email + '"' + ' and password = ' + '"' + req.body.password +'"';
-        db.query(sql_select_user_info, function(err, rows, fields){
+        var pattern = /^\w+[\w-]*@[a-z0-9]+\.com/;
+        var sql_select_user_info = 'select uid, email, password from user where email = ' + '"' + req.body.email + '"' + ' and password = ' + '"' + req.body.password +'"';
+        if(req.body.email && req.body.password && pattern.test(req.body.email)){
+            db.query(sql_select_user_info, function(err, rows, fields){
             if(err) throw err;
-            console.log('查询成功',rows);
-            if(rows.length > 0){
-                res.status(200).send({
-                    code: 1,
-                    message: '登录成功'
-                })
-            } else {
-                res.status(200).send({
-                    code: -1,
-                    message: '账号或密码错误'
-                })
-            }
-        })
+                console.log('查询成功',rows);
+                if(rows.length > 0){
+                    res.status(200).send({
+                        code: 1,
+                        uid: rows[0].uid,
+                        message: '登录成功'
+                    })
+                } else {
+                    //不能用401, 不然就是错误请求，获取不到值了
+                    res.status(200).send({
+                        code: -1,
+                        message: '账号或密码错误'
+                    })
+                }
+            })
+        } else {
+            res.status(400).send({
+                code: -1,
+                message: '请求参数错误'
+            })
+        }
     }
 })
 

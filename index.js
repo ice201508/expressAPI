@@ -5,6 +5,7 @@ var login = require('./routes/login.router');
 var book = require('./routes/book.router');
 var upload = require('./routes/upload.router');
 var user = require('./routes/user.router');
+var order = require('./routes/order.router');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var redisStore = require('connect-redis')(session);
@@ -37,6 +38,7 @@ app.use('/', login);
 app.use('/book', book);
 app.use('/upload', upload);
 app.use('/user', user);
+app.use('/order', order);
 
 app.set("x-powered-by",false);
 //默认所有请求都可以跨域
@@ -54,11 +56,11 @@ app.use(function(req, res, next){
 
 //错误处理中间件
 app.use(function(err, req, res, next){
-    if(req.session){
-        next(new Error("没有设置session"));
-    }
+    // if(req.session){
+    //     next(new Error("没有设置session"));
+    // }
     console.log(err.stack);
-    res.status(500).send('something broke');
+    res.status(500).send({message: '服务器出错'});
 })
 
 app.listen(3005);
