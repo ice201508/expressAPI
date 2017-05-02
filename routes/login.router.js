@@ -50,7 +50,7 @@ router.get('/', function(req, res, next){
 router.post('/login', function(req, res, next){
     console.log("req.body: ", req.body);
     if(req.body.auth_code_confirm) {
-        var curr_time = moment().format();
+        var curr_time = moment().format("YYYY-MM-DD HH:mm");
         var uid = '00' + new Date().getTime();
         var sql = 'select auth_code from authcode where auth_code_confirm = ' + '"' + req.body.auth_code_confirm + '"';
         var sql_insert_user_info = 'insert into user VALUES(null,' + '"' + uid + '"'+ ",'" + req.body.email + "'," + "'" + req.body.password + "'," + 'null ,null,null,' + "'" + curr_time + "'," + "'"+curr_time + "'" + ')'
@@ -106,17 +106,21 @@ router.post('/login', function(req, res, next){
 
 router.post('/registry', function(req, res, next){
     create_table()
-    res.status(500).send({message: 'success'});
+    res.status(200).send({
+        code: 1,
+        message: 'success'
+    });
 })
 
 router.post('/authcode', function(req, res, next){
+    console.log('req.query: ', req.query);
     var random_auth_code = '';
     var i = 0;
     while(i<4){
         random_auth_code += Math.floor(Math.random() * 10).toString()
         i++;
     }
-    var curr_time = moment().format();
+    var curr_time = moment().format("YYYY-MM-DD HH:mm");
     var auth_code_confirm = public.generator_string(20);
     var sql = "insert into authcode VALUES(null," + random_auth_code + "," + "'" + auth_code_confirm + "'," + "'" +curr_time + "'" + ")";
 
@@ -125,7 +129,8 @@ router.post('/authcode', function(req, res, next){
         console.log('插入数据库成功');
     })
 
-    var des = "'leko-ljl@163.com'";
+    //var des = "'leko-ljl@163.com'";
+    var des = req.query.email;
     var sub = "'主题内容'";
     var html = "'这是来自www.leijiuling.com的注册邮件，如果不是本人，请忽略<br /> <h3>验证码：" + random_auth_code + "</h3> <br/><a href='http://www.leijiuling.com'>前往</a>"
 
