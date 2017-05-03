@@ -13,7 +13,8 @@ var redisStore = require('connect-redis')(session);
 var app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}));
-app.use('/static', express.static(__dirname + '/public/'));
+//app.use('/static', express.static(__dirname + '/public/'));
+app.use(express.static(__dirname + '/public/'));
 
 app.use(cookieParser());
 //sesstion定义必须定义在路由分配之前
