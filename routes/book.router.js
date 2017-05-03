@@ -13,7 +13,12 @@ router.use(function(req, res, next){
 
 //http://expressjs.jser.us/guide.html#users-online
 router.get('/allbooks', function(req, res, next){
-    console.log("req.cookies: ", req.cookies);
+    req.session.user = {
+        name: 'Lucy',
+        age: 25,
+    }
+    console.log("req.cookies: ", req.signedCookies);
+    // console.log("req.session: ", req.session);
     var sql = 'select bid, bname, author, intro, price, img_url, detail, rate, create_time from book';
     db.query(sql, function(err, rows, fields){
         if(err) {
@@ -23,6 +28,8 @@ router.get('/allbooks', function(req, res, next){
                 code: 1,
                 books: rows,
             })
+            console.log('session user: ', req.session.user);
+            console.log('session maxAge: ', req.session.cookie.maxAge);
         }
     })
 })

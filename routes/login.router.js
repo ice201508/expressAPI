@@ -44,7 +44,7 @@ function create_table(){
 }
 
 router.get('/', function(req, res, next){
-    res.sendFile(path.join(__dirname , '..' , '/views/index.html'));
+    res.sendFile(path.join(__dirname , '../views/index.html'));
 })
 
 router.post('/login', function(req, res, next){

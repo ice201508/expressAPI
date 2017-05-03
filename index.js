@@ -13,26 +13,28 @@ var redisStore = require('connect-redis')(session);
 var app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:false}));
-//app.use('/static', express.static(__dirname + '/public/'));
-app.use(express.static(__dirname + '/public/'));
+app.use('/static', express.static(__dirname + '/views/static'));
+// app.use(express.static(__dirname + '/public/'));
 
-app.use(cookieParser());
+app.use(cookieParser('sessiontest'));
+app.set('trust proxy', 1)
 //sesstion定义必须定义在路由分配之前
-// app.use(session({
-//     secret: 'session set',
-//     name: 'book-seesion',  //默认名称是 connect.sid
-//     resave: true,   //每次请求都重新计算过期时间(如果设置了固定的)
-//     saveUninitialized: true,  //不管有没有设置session，true表示给每个请求带上即  res-header里面的set-cookies，用res.cookie(..)也在这个字段里面
-//     cookie: {
-//     maxAge : 3600000,
-//     },
-//     // store: new redisStore({
-//     //     host: 'localhost',
-//     //     port: 6379,
-//     //     pass: 123456,
-//     //     //prefix: 'book-session'  默认是sess:
-//     // }),
-// }))
+//这里的session是内存存储, 如果需要声明的周期长一点，如免密码2周等，这时可以使用内存之外的存储载体，数据库
+app.use(session({
+    secret: 'sessiontest',
+    name: 'book-seesion',  //默认名称是 connect.sid
+    resave: false,   //每次请求都重新计算过期时间(如果设置了固定的)
+    saveUninitialized: true,  //不管有没有设置session，true表示给每个请求带上即  res-header里面的set-cookies，用res.cookie(..)也在这个字段里面
+    cookie: {
+        //maxAge : 3600000, 这个值不设置即 session cookie过期时间为浏览器关闭时间
+    },
+    // store: new redisStore({
+    //     host: 'localhost',
+    //     port: 6379,
+    //     pass: 123456,
+    //     //prefix: 'book-session'  默认是sess:
+    // }),
+}))
 
 //将对应的路由挂载到不同路径
 app.use('/', login);
@@ -50,8 +52,7 @@ app.use(function(req, res, next){
     // res.set("Access-Control-Allow-Headers", "Content-Type");
     // res.header('Content-Type', 'application/json;charset=utf-8');
     // res.set("X-Powered-By",'leijiuling')
-    
-    
+
     next();
 })
 
@@ -61,7 +62,10 @@ app.use(function(err, req, res, next){
     //     next(new Error("没有设置session"));
     // }
     console.log(err.stack);
-    res.status(500).send({message: '服务器出错'});
+    res.status(500).send({
+        code: -1,
+        message: '服务器出错'
+    });
 })
 
 app.listen(3005);
