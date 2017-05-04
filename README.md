@@ -2,6 +2,17 @@
 npm install express multer body-parser cookie-parser jsonwebtoken express-session mongoskin --save
 使用supervisor调试
 
+
+nodejs守护进程
+node index.js > stdout.txt 2> stderr.txt < /dev/null &
+disown
+
+直接  nohup node index.js &
+
+第三方，作为服务进程启动 forever start app.js
+
+还可以用 [Systemd](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
+
 [Express文档](https://expressjs.com/)，
 [Express中文文档](http://www.expressjs.com.cn/)
 [Express Git BOOK](https://maninboat.gitbooks.io/n-blog/content/)
@@ -86,3 +97,12 @@ connect-redis是一个redis版的session存储器，使用node_redis作为驱动
 
 
 模仿别人的项目 https://github.com/nswbmw/N-blog/blob/master/lib/mongo.js
+
+
+关于session的应用
+npm install express-mysql-session --save
+
+session 可以存放在 1）内存、2）cookie本身、3）redis 或 memcached 等缓存中，或者4）数据库中
+线上来说，一般存在redis等缓存中
+
+session存在服务器，只将session_id存放在客户端的cookie中

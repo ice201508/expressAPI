@@ -15,16 +15,30 @@ router.use(function(req, res, next){
 router.get('/all_orders', function(req, res, next){  //get方式没有req.body , 也不是req.params, 参数是req.query
     var sql = 'select order_id,pay_money,create_time from orders where member_id =' + '"' + req.query.user_id + '"';
     console.log('req.query: ', req.query);
-    db.query(sql, function(err, rows, fields){
-        if(err) {
-            res.status(500).send({code: -1, message: err})
-        } else {
-            res.status(200).send({
-                code: 1,
-                orders: rows,
-            })
-        }
-    })
+    var sess = req.session;
+    if(sess.view){
+        sess.view++;
+        res.json({
+            exp: sess.cookie.maxAge/1000,
+            sid: sess.id
+        })
+    } else {
+        sess.view = true;
+        res.json({
+            exp: sess.cookie.maxAge/1000,
+            sid: sess.id
+        })
+    }
+    // db.query(sql, function(err, rows, fields){
+    //     if(err) {
+    //         res.status(500).send({code: -1, message: err})
+    //     } else {
+    //         res.status(200).send({
+    //             code: 1,
+    //             orders: rows,
+    //         })
+    //     }
+    // })
 })
 
 router.post('/settle', function(req, res, next){

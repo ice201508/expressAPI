@@ -13,23 +13,21 @@ router.use(function(req, res, next){
 
 //http://expressjs.jser.us/guide.html#users-online
 router.get('/allbooks', function(req, res, next){
-    req.session.user = {
-        name: 'Lucy',
-        age: 25,
-    }
-    console.log("req.cookies: ", req.signedCookies);
-    // console.log("req.session: ", req.session);
+    console.log('req.header: ', req.headers.cookie);
+    console.log("req.signedCookies: ", req.signedCookies);
+    console.log("req.cookies: ", req.cookies);
     var sql = 'select bid, bname, author, intro, price, img_url, detail, rate, create_time from book';
     db.query(sql, function(err, rows, fields){
         if(err) {
             res.status(500).send({code: -1, message: err})
         } else {
+            //cookie-parse的功能，通过http协议的set-Cookie设置前端的cookie
+            //res.cookie('isVisit', true, {maxAge: 60*1000});
             res.status(200).send({
                 code: 1,
                 books: rows,
             })
-            console.log('session user: ', req.session.user);
-            console.log('session maxAge: ', req.session.cookie.maxAge);
+            console.log('req.session-allbooks: ', req.session);
         }
     })
 })

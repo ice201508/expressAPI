@@ -43,9 +43,20 @@ function create_table(){
     });
 }
 
-router.get('/', function(req, res, next){
-    res.sendFile(path.join(__dirname , '../views/index.html'));
-})
+// router.get('/', function(req, res, next){
+//     if(req.session.isVisit) {
+//         req.session.isVisit++;
+//         console.log("req.session 2 ", req.session);
+//         console.log("req.signedCookies", req.signedCookies);
+//         res.sendFile(path.join(__dirname , '../views/index.html'));
+//         // res.send('<p>第 ' + req.session.isVisit + '次来此页面</p>');
+//     } else {
+//         req.session.isVisit = 1;
+//         res.sendFile(path.join(__dirname , '../views/index.html'));
+//         // res.send("欢迎第一次来这里");
+//         console.log("req.session 1 ", req.session);
+//     }
+// })
 
 router.post('/login', function(req, res, next){
     console.log("req.body: ", req.body);
