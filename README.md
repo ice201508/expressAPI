@@ -8,6 +8,7 @@ node index.js > stdout.txt 2> stderr.txt < /dev/null &
 disown
 
 直接  nohup node index.js &
+nohup node index.js > index.js.md 2>&1 &
 
 第三方，作为服务进程启动 forever start app.js
 
@@ -40,7 +41,14 @@ response cookie是服务器端返回的新的cookie，也就是将会储存在�
 现在用了 app.use(session(options)), 也可以不用引入cookie-parser库， 直接用 req.session.name, 取得对应的已经储存的值
 
 
+cookie签名，session 两种方式来保存用户的信息
+res.cookie('isVisit', '3526464488', {signed: true, maxAge: 60*1000});
+
 ### 错误处理
+
+一个问题就是， 后端用localhost:3000 访问，前端ajax请求的前缀用127.0.0.1:3000这样是会有问题的，出现readyState=0的情况
+
+
 
 ### JWT
 jsonwebtoken 中文  百度

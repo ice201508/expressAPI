@@ -15,9 +15,9 @@ db.connect();
 //CORS 跨域资源共享
 router.use(function(req, res, next){
     res.set({
-        "Access-Control-Allow-Origin": "*", //指定某个具体的网站http://localhost:63342
-        "Access-Control-Allow-Headers": "Content-Type,Content-Length, Authorization, Accept,X-Requested-With",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
+        // "Access-Control-Allow-Origin": "*", //指定某个具体的网站http://localhost:63342
+        // "Access-Control-Allow-Headers": "Content-Type,Content-Length, Authorization, Accept,X-Requested-With",
+        // "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
         //res.header('Access-Control-Allow-Headers', 'Content-Type');
         //res.header('Access-Control-Allow-Credentials','true');
     })
@@ -43,20 +43,16 @@ function create_table(){
     });
 }
 
-// router.get('/', function(req, res, next){
-//     if(req.session.isVisit) {
-//         req.session.isVisit++;
-//         console.log("req.session 2 ", req.session);
-//         console.log("req.signedCookies", req.signedCookies);
-//         res.sendFile(path.join(__dirname , '../views/index.html'));
-//         // res.send('<p>第 ' + req.session.isVisit + '次来此页面</p>');
-//     } else {
-//         req.session.isVisit = 1;
-//         res.sendFile(path.join(__dirname , '../views/index.html'));
-//         // res.send("欢迎第一次来这里");
-//         console.log("req.session 1 ", req.session);
-//     }
-// })
+//最好放在一个域名下，同一个服务不同网站放在不同目录下，共享一个服务进程index.js
+router.get('/', function(req, res, next){
+    res.cookie('isVisit', '3526464488', {signed: true, maxAge: 60*1000});
+    res.cookie('user', 'Lucy');
+    res.sendFile(path.join(__dirname , '../views/ng/index.html'));
+})
+
+router.get('/buy', function(req, res, next){
+    res.sendFile(path.join(__dirname , '../views/vue/index.html'));
+})
 
 router.post('/login', function(req, res, next){
     console.log("req.body: ", req.body);
@@ -90,20 +86,27 @@ router.post('/login', function(req, res, next){
         var sql_select_user_info = 'select uid, email, password from user where email = ' + '"' + req.body.email + '"' + ' and password = ' + '"' + req.body.password +'"';
         if(req.body.email && req.body.password && pattern.test(req.body.email)){
             db.query(sql_select_user_info, function(err, rows, fields){
-            if(err) throw err;
-                console.log('查询成功',rows);
-                if(rows.length > 0){
-                    res.status(200).send({
-                        code: 1,
-                        uid: rows[0].uid,
-                        message: '登录成功'
-                    })
+                if(err){
+                    res.status(500).send({code: -1, message: err});
                 } else {
-                    //不能用401, 不然就是错误请求，获取不到值了
-                    res.status(200).send({
-                        code: -1,
-                        message: '账号或密码错误'
-                    })
+                    if(rows.length > 0){
+                        if(req.session.userVisit) {
+                            req.session.userVisit++;
+                        } else {
+                            req.session.userVisit = 1;
+                        }
+                        res.status(200).send({
+                            code: 1,
+                            uid: rows[0].uid,
+                            message: '登录成功'
+                        })
+                    } else {
+                        //不能用401, 不然就是错误请求，获取不到值了
+                        res.status(200).send({
+                            code: -1,
+                            message: '账号或密码错误'
+                        })
+                    }
                 }
             })
         } else {

@@ -4,41 +4,37 @@ var db = require("../modal/mysql").db;
 
 
 router.use(function(req, res, next){
-    res.set({
-        "Access-Control-Allow-Origin": "*", //指定某个具体的网站http://localhost:3000
-        "Access-Control-Allow-Headers": "Content-Type,Content-Length, Authorization, Accept,X-Requested-With",
-        "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
-    })
+    // res.set({
+    //     "Access-Control-Allow-Origin": "*", //指定某个具体的网站http://localhost:3000
+    //     "Access-Control-Allow-Headers": "Content-Type,Content-Length, Authorization, Accept,X-Requested-With",
+    //     "Access-Control-Allow-Methods": "PUT, GET, POST, DELETE, OPTIONS",
+    // })
+    
     next();
 })
 
 router.get('/all_orders', function(req, res, next){  //get方式没有req.body , 也不是req.params, 参数是req.query
     var sql = 'select order_id,pay_money,create_time from orders where member_id =' + '"' + req.query.user_id + '"';
-    console.log('req.query: ', req.query);
-    var sess = req.session;
-    if(sess.view){
-        sess.view++;
-        res.json({
-            exp: sess.cookie.maxAge/1000,
-            sid: sess.id
+    if(req.session.userVisit){
+        db.query(sql, function(err, rows, fields){
+            if(err) {
+                //一般状态不用500
+                res.status(200).json({code: -1, message: err})
+            } else {
+                res.status(200).json({
+                    code: 1,
+                    orders: rows,
+                })
+            }
         })
     } else {
-        sess.view = true;
-        res.json({
-            exp: sess.cookie.maxAge/1000,
-            sid: sess.id
+        console.log('请先登录');
+        res.status(403).json({
+            code: -1,
+            message: '请先登录',
         })
     }
-    // db.query(sql, function(err, rows, fields){
-    //     if(err) {
-    //         res.status(500).send({code: -1, message: err})
-    //     } else {
-    //         res.status(200).send({
-    //             code: 1,
-    //             orders: rows,
-    //         })
-    //     }
-    // })
+    
 })
 
 router.post('/settle', function(req, res, next){
@@ -50,7 +46,7 @@ router.post('/settle', function(req, res, next){
     console.log('sql: ',sql);
     db.query(sql, function(err, rows, fields){
         if(err) {
-            res.status(500).send({code: -1, message: '插入数据库失败'})
+            res.status(200).send({code: -1, message: '插入数据库失败'})
         } else {
             res.status(200).send({
                 code: 1,
