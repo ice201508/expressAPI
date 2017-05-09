@@ -75,6 +75,7 @@ router.post('/login', function(req, res, next){
                     res.send({
                         code: 1,
                         uid: uid,
+                        email: rows[0].email,
                         message: '注册成功'
                     });
                 })
@@ -83,7 +84,7 @@ router.post('/login', function(req, res, next){
             }
         })
     } else {
-        var pattern = /^\w+[\w-]*@[a-z0-9]+\.com/;
+        var pattern = /^\w+[\w-]*@[a-z0-9]+\.com|^root$/;
         var sql_select_user_info = 'select uid, email, password from user where email = ' + '"' + req.body.email + '"' + ' and password = ' + '"' + req.body.password +'"';
         if(req.body.email && req.body.password && pattern.test(req.body.email)){
             db.query(sql_select_user_info, function(err, rows, fields){
@@ -91,14 +92,15 @@ router.post('/login', function(req, res, next){
                     res.status(500).send({code: -1, message: err});
                 } else {
                     if(rows.length > 0){
-                        if(req.session.userVisit) {
-                            req.session.userVisit++;
-                        } else {
-                            req.session.userVisit = 1;
-                        }
+                        // if(req.session.userVisit) {
+                        //     req.session.userVisit++;
+                        // } else {
+                        //     req.session.userVisit = 1;
+                        // }
                         res.status(200).send({
                             code: 1,
                             uid: rows[0].uid,
+                            email: rows[0].email,
                             message: '登录成功'
                         })
                     } else {
@@ -189,27 +191,6 @@ router.get('/getinfo', function(req, res, next){
     })
 })
 
-router.get('/login1111', function(req, res, next){
-    if(!req.session.times){
-        req.session.times = 1;
-    } else {
-        req.session.times += 1;
-        // db.collection('book').insert({times: req.session.times}, function(err, result){
-        //     console.log(result);
-        //     mongo_data = result;
-        //     db.close();
-        // })
-    }
-
-    var data = {
-        cookies: req.cookies || 'empty',
-        session: req.session,
-        path: path.resolve(__dirname , '..' , '/views/index.html'),
-        times: ("调用接口的次数: " + req.session.times),
-    }
-    
-    res.send(data);
-})
 
 router.get('/edit', function(req,res,next){
     res.set('self-token', 'adfadfaw234');

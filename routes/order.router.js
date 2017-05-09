@@ -15,25 +15,17 @@ router.use(function(req, res, next){
 
 router.get('/all_orders', function(req, res, next){  //get方式没有req.body , 也不是req.params, 参数是req.query
     var sql = 'select order_id,pay_money,create_time from orders where member_id =' + '"' + req.query.user_id + '"';
-    if(req.session.userVisit){
-        db.query(sql, function(err, rows, fields){
-            if(err) {
-                //一般状态不用500
-                res.status(200).json({code: -1, message: err})
-            } else {
-                res.status(200).json({
-                    code: 1,
-                    orders: rows,
-                })
-            }
-        })
-    } else {
-        console.log('请先登录');
-        res.status(403).json({
-            code: -1,
-            message: '请先登录',
-        })
-    }
+    db.query(sql, function(err, rows, fields){
+        if(err) {
+            //一般状态不用500
+            res.status(200).json({code: -1, message: err})
+        } else {
+            res.status(200).json({
+                code: 1,
+                orders: rows,
+            })
+        }
+    })
 })
 
 router.post('/settle', function(req, res, next){

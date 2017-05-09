@@ -18,11 +18,11 @@ router.get('/allbooks', function(req, res, next){
     // } else {
     //     req.session.isVisitSession = 1;
     // }
-    console.log('res.session: ', req.session);
-    console.log('req.header: ', req.headers.cookie);
-    console.log("req.signedCookies: ", req.signedCookies);
-    console.log("req.signedCookies[connect.sid]: ", req.signedCookies['book-session']);
-    console.log("req.cookies: ", req.cookies);
+    // console.log('res.session: ', req.session);
+    // console.log('req.header: ', req.headers.cookie);
+    // console.log("req.signedCookies: ", req.signedCookies);
+    // console.log("req.signedCookies[connect.sid]: ", req.signedCookies['book-session']);
+    // console.log("req.cookies: ", req.cookies);
     var sql = 'select bid, bname, author, intro, price, img_url, detail, rate, create_time from book';
     db.query(sql, function(err, rows, fields){
         if(err) {
@@ -76,7 +76,7 @@ router.post('/detail', function(req, res, next){
         'req_path': req.path,
         'req_originalUrl': req.originalUrl,
         'req_params': req.params,
-        'session': req.session,
+        // 'session': req.session,
     }
     res.send(data);
 })
