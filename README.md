@@ -12,6 +12,12 @@ nohup node index.js > index.js.md 2>&1 &
 
 第三方，作为服务进程启动 forever start app.js
 
+pm2 start index.js --name book
+pm2 restart/stop book
+pm2 kill  关闭所有pm2进程
+pm2 web
+
+
 还可以用 [Systemd](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
 
 [Express文档](https://expressjs.com/)，
@@ -114,3 +120,9 @@ session 可以存放在 1）内存、2）cookie本身、3）redis 或 memcached 
 线上来说，一般存在redis等缓存中
 
 session存在服务器，只将session_id存放在客户端的cookie中
+
+
+
+### restapi写法
+[推荐写法](http://www.tuicool.com/articles/ruqqaiE)
+使用 小写字母、数字以及下划线（“_”） 描述字段，不使用大写描述字段。

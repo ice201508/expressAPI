@@ -14,7 +14,7 @@ router.use(function(req, res, next){
 })
 
 router.get('/all_orders', function(req, res, next){  //get方式没有req.body , 也不是req.params, 参数是req.query
-    var sql = 'select order_id,pay_money,create_time from orders where member_id =' + '"' + req.query.user_id + '"';
+    var sql = 'select order_id,pay_money,create_time from order where member_id =' + '"' + req.query.user_id + '"';
     db.query(sql, function(err, rows, fields){
         if(err) {
             //一般状态不用500
@@ -33,7 +33,7 @@ router.post('/settle', function(req, res, next){
     var serial_no = Date.now().toString();
     var curr_time = moment(req.body.create_time).format("YYYY-MM-DD HH:mm")
     //var sql=`insert into order VALUES (null, ${orderi_d}, ${req.body.user_id})`   怎样用es6字符串拼接
-    var sql="insert into order_book VALUES(null," + "'" + order_id + "'," + "'" + req.body.user_id + "'," + "'" +serial_no + "',"  + "'" + req.body.total + "'," + "'" + moment().format("YYYY-MM-DD HH:mm") + "'" + ")"
+    var sql="insert into order VALUES(null," + "'" + order_id + "'," + "'" + req.body.user_id + "'," + "'" +serial_no + "',"  + "'" + req.body.total + "'," + "'" + moment().format("YYYY-MM-DD HH:mm") + "'" + ")"
     console.log('sql: ',sql);
     db.query(sql, function(err, rows, fields){
         if(err) {

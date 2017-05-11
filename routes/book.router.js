@@ -66,19 +66,27 @@ router.post('/edit', function(req, res, next){
             res.status(200).send({message:'成功'});
         })
     } else {
-            res.status(401).send({message: '参数错误'})
-        }
-    })
-
-
-router.post('/detail', function(req, res, next){
-    var data = {
-        'req_path': req.path,
-        'req_originalUrl': req.originalUrl,
-        'req_params': req.params,
-        // 'session': req.session,
+        res.status(401).send({message: '参数错误'})
     }
-    res.send(data);
+})
+
+
+router.post('/deleteOne', function(req, res, next){
+    var sql = "delete from book where bid =" + "'" + req.body.bid + "'"+ ";"
+    if(req.body){
+        console.log(req.body.bid);
+        db.query(sql, function(err, rows, fields){
+            if(err){
+                res.status(500).send({message: '数据库查询失败'});
+            };
+            res.status(200).send({
+                code: 1,
+                message:'删除成功'
+            });
+        })
+    }else {
+        res.status(401).send({message: '参数错误'})
+    }
 })
 
 module.exports = router;
